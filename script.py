@@ -1,4 +1,6 @@
 import os
+import logging
+import time
 import get_data as gd
 import chunking as ck
 import Embedding_VectoreStore as ev
@@ -6,6 +8,15 @@ import model as md
 import agent as ag
 
 def main():
+
+    os.makedirs("logs", exist_ok=True)
+
+    logging.basicConfig(
+        filename = "logs/raq_queries.log",
+        level=logging.INFO,
+        format="%(asctime)s | %(levelname)s | %(message)s"
+    )
+
     folder_path = "files/"
 
 
@@ -15,26 +26,57 @@ def main():
     chunk = ck.chunks(docs)
     print("chunks Created: ", len(chunk))
 
-    retriever = ev.vector_DB(chunk)
+    retriever = ev.vectore_DB(chunk)
     
     llm = md.model()
 
+    start = time.perf_counter()
+
     query = input("enter a question or type 'exit' to close prompt : ")
     
-    action = ag.agent_controller(query)
+    decision = ag.agent_controller(query)
+
+    action = decision["action"]
 
     if action == "search":
         print("Agent decided to SEARCH doc for : ", query)
+        print("Reason : ", decision["reason"])
         results = retriever.invoke(query)
-        context = "\n".join([r.page_content for r in results])
-        final_prompt = f"Use this context:\n{context}\n\nAnswer:\n{query}"
+        context = "\n".join(
+            [
+                f"Source: {r.metadata.get('source', 'unknown')}, "
+                f"Page: {r.metadata.get('page', 'unknown')}\n"
+                f"{r.page_context}" 
+                for r in results
+            ]
+        )
+        final_prompt = f"""
+        You are a helpful assistant.
+        Answer only using the context below.
+        If the answer is not present in the context, say "I don't know.
+
+        Context:
+        {context}
+
+        Question:
+        {query}
+
+        Answer:
+        """
     else:
         print("Agent decided to answer DIRECTLY: ", query)
         final_prompt = query
     
-    response = llm(final_prompt)[0]["generated_text"]
+    # response = llm(final_prompt)[0]["generated_text"]
+    response = llm.invoke(final_prompt).content
     print(response)
     print("-" * 20)
+
+    latency = time.perf_counter() - start
+
+    logging.info(
+        f"query='{query}' | action='{action}' | chunks={len(results) if action == "search" else 0} | latency={latency:.2f}s"
+    )
 
 if __name__ == "__main__":
     main()

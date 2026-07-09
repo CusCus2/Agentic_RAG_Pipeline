@@ -1,0 +1,14 @@
+[
+  {
+    "query": "Summarize the main idea of the document.",
+    "expected_action": "search"
+  },
+  {
+    "query": "What is RAG?",
+    "expected_action": "direct"
+  },
+  {
+    "query": "According to the document, what are the key points?",
+    "expected_action": "search"
+  }
+]

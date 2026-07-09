@@ -1,0 +1,4 @@
+2026-07-09 22:06:40,042 | INFO | HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2026-07-09 22:07:07,203 | INFO | query='What are the main risks of LLM applications?' | action='direct' | chunks=0 | latency=38.42s
+2026-07-09 22:14:16,112 | INFO | HTTP Request: POST http://127.0.0.1:11434/api/chat "HTTP/1.1 200 OK"
+2026-07-09 22:14:20,334 | INFO | query='Which document talks about monitoring AI systems after deployment?' | action='search' | chunks=3 | latency=15.24s

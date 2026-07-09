@@ -3,13 +3,14 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 
 def vectore_DB(chunks):
     embedding_model = HuggingFaceEmbeddings(
-        model_name = "all-miniLM-L6-v2"
+        model_name = "sentence-transformers/all-miniLM-L6-v2"
     )
 
     texts = [c.page_content for c in chunks]
-    db = Chroma(
+    db = Chroma.from_documents(
+        documents = chunks,
         collection_name="rag_store",
-        embedding_model = embedding_model
+        embedding = embedding_model
     )
     db.add_texts(texts)
 
