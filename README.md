@@ -45,13 +45,10 @@ Place one or more PDF files inside the documents/ folder.
 
 Example:
 
-documents/
-
-├── owasp-llm-top-10.pdf
-|
-├── nist-ai-risk-management-framework.pdf
-|
-└── secure-ai-guidelines.pdf
+documents
+- owasp-llm-top-10.pdf
+- nist-ai-risk-management-framework.pdf
+- secure-ai-guidelines.pdf
 
 ### 6. Run the FastAPI server
 uvicorn api:app --reload
